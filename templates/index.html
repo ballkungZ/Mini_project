@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housing Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background-color: #5cb85c;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Housing Price Prediction</h1>
+    <form id="predictionForm">
+        <label for="bedrooms">Number of Bedrooms</label>
+        <input type="number" id="bedrooms" placeholder="Enter number of bedrooms" required>
+
+        <label for="bathrooms">Number of Bathrooms</label>
+        <input type="number" id="bathrooms" placeholder="Enter number of bathrooms" required>
+
+        <label for="square_feet">Square Feet</label>
+        <input type="number" id="square_feet" placeholder="Enter square feet" required>
+
+        <label for="neighborhood">Select Neighborhood</label>
+        <select id="neighborhood" required>
+            <option value="Neighborhood_Rural">Rural</option>
+            <option value="Neighborhood_Suburb">Suburb</option>
+            <option value="Neighborhood_Urban">Urban</option>
+        </select>
+
+        <button type="submit">Predict Price</button>
+    </form>
+    <div class="result" id="result"></div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const bedrooms = document.getElementById('bedrooms').value;
+            const bathrooms = document.getElementById('bathrooms').value;
+            const squareFeet = document.getElementById('square_feet').value;
+            const neighborhood = document.getElementById('neighborhood').value;
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    bedrooms: bedrooms,
+                    bathrooms: bathrooms,
+                    square_feet: squareFeet,
+                    neighborhood: neighborhood
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `<h2>Predicted Price: $${data.predicted_price.toFixed(0)}</h2>`;
+            } else {
+                const errorData = await response.json();
+                document.getElementById('result').innerHTML = `<h2>Error: ${errorData.error}</h2>`;
+            }
+        });
+    </script>
+</body>
+</html>
