@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5001:5001"  # Map local port 5001 to container port 5000
+    volumes:
+      - .:/usr/src/app  # Mount the current directory to /usr/src/app inside the container
+    environment:
+      - FLASK_ENV=development  # Optional: Enable Flask debug mode for development
